@@ -4,13 +4,10 @@
 \alias{adjust.p.value}
 \title{Adjust p-value}
 \usage{
-adjust.p.value(p.value, type = c("parametric", "non-parametric"),
-  adjust.method = c("holm", "bonferroni", "BH"))
+adjust.p.value(p.value, adjust.method = c("holm", "bonferroni", "BH"))
 }
 \arguments{
 \item{p.value}{p-value to adjust}
-
-\item{type}{parametric of non-parametric}
 
 \item{adjust.method}{p-values adjusted using several methods}
 }

@@ -1,19 +1,18 @@
 #' Adjust p-value
 #' @importFrom stats p.adjust
 #' @param p.value p-value to adjust
-#' @param type parametric of non-parametric
 #' @param adjust.method p-values adjusted using several methods
-adjust.p.value <- function(p.value, type = c("parametric","non-parametric"), adjust.method = c("holm", "bonferroni", "BH")){
+adjust.p.value <- function(p.value, adjust.method = c("holm", "bonferroni", "BH")){
   if((adjust.method == "holm")||(adjust.method == "Holm")){
-    p.adjust <- p.adjust(p, method = "holm", n = length(p))
+    p.adjust <- p.adjust(p.value, method = "holm", n = length(p.value))
     resultMessage <- "P value adjustment method: holm"
   }
   else if((adjust.method == "bonferroni")||(adjust.method == "Bonferroni")||(adjust.method == "Bonf")||(adjust.method == "bonf")){
-    p.adjust <- p.adjust(p, method = "bonferroni", n = length(p))
+    p.adjust <- p.adjust(p.value, method = "bonferroni", n = length(p.value))
     resultMessage <- "P value adjustment method: bonferroni"
   }
   else if(adjust.method == "BH"){
-    p.adjust <- p.adjust(p, method = "BH", n = length(p))
+    p.adjust <- p.adjust(p.value, method = "BH", n = length(p.value))
     resultMessage <- "P value adjustment method: Benjamini & Hochberg"
   }
   else{
@@ -21,9 +20,9 @@ adjust.p.value <- function(p.value, type = c("parametric","non-parametric"), adj
     return(NA)
   }
   p.adjust <- data.frame(p.adjust)
-  print(p.adjust)
-  cat(sprintf("\n%s\n", resultMessage))
-  return(invisible(p.adjust))
+  #print(p.adjust)
+  #cat(sprintf("\n%s\n", resultMessage))
+  return(invisible(list(p.adjust,resultMessage)))
 }
 
 #' Calculate p-value
@@ -35,7 +34,7 @@ adjust.p.value <- function(p.value, type = c("parametric","non-parametric"), adj
 #' @param type parametric of non-parametric
 calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-parametric")){
 
-  xTitle <- colnames(x)
+  xTitle <- colnames(data)
 
   size <- dim(data)
   chooseNum <- choose(size[2],2)
@@ -51,16 +50,16 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
       if(i != j){
 
         # 検定手法選択
-        if(method == "parametric"){
-          if(paired){
+        if(type == "parametric"){
+          if(paired == TRUE){
             res <- t.test(data[[i]], data[[j]], paired = T)
           }else{
             res <- t.test(data[[i]], data[[j]], paired = F, var.equal=F)
           }
 
         }
-        else if(method == "non-parametric"){
-          if(paired){
+        else if(type == "non-parametric"){
+          if(paired == TRUE){
             res <- wilcox.exact(data[[i]], data[[j]], alternative="t",paired=T)
           }else{
             res <-brunner.munzel.test(data[[i]], data[[j]])
@@ -81,15 +80,15 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
     jStart <- jStart + 1
   }
 
-  if(method == "parametric"){
-    if(paired == T){
+  if(type == "parametric"){
+    if(paired == TRUE){
       resultMessage <- "Pairwise comparisons using paired t tests"
     }else{
       resultMessage <- "Pairwise comparisons using welch t tests"
     }
   }
-  else if(method == "non-parametric"){
-    if(paired == T){
+  else if(type == "non-parametric"){
+    if(paired == TRUE){
       resultMessage <- "Pairwise comparisons using Wilcoxon signed rank tests"
     }else{
       resultMessage <- "Pairwise comparisons using Brunner-Munzel tests"
@@ -106,7 +105,8 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 #' @param data data frame
 #' @param type parametric of non-parametric
 plot.graph <- function(data, type = c("parametric","non-parametric")){
-  if(method == "parametric"){
+  xTitle <- colnames(data)
+  if(type == "parametric"){
     meanValue <- apply(data,2,mean, na.rm=TRUE)
     sdValue <- apply(data, 2, sd, na.rm=TRUE)
     yRoof=round(max(meanValue+sdValue)*1.2, 1)
@@ -115,7 +115,7 @@ plot.graph <- function(data, type = c("parametric","non-parametric")){
     arrows(bar, meanValue+sdValue, bar, meanValue-sdValue, angle=90, length=0.1)
     axis(side=1, bar, labels=F)
   }
-  else if(method == "non-parametric"){
+  else if(type == "non-parametric"){
     boxplot(data, range = 0)
   }
 }
@@ -126,6 +126,7 @@ plot.graph <- function(data, type = c("parametric","non-parametric")){
 #' @param type parametric of non-parametric.
 #' @param adjust.method p-values adjusted using several methods.
 #' @param plota a logical indicating whether you want a plot graph.
+#' @export
 ez.stat.diff.test <- function(data,
                               type = c("parametric", "non-parametric"),
                               paired = FALSE,
@@ -135,11 +136,15 @@ ez.stat.diff.test <- function(data,
 
   p <- calculate.p.value(data, paired, type)
 
-  if(plot){
+  if(plot==TRUE){
     plot.graph(data, type)
   }
 
-  result <- adjust.p.value(p[[1]], type, adjust.method)
-  rownames(result) <- p[[2]]
-  return(invisible(result));
+  result <- adjust.p.value(p[[1]], adjust.method)
+  rownames(result[[1]]) <- p[[2]]
+
+  print(result[[1]])
+  cat(sprintf("\n%s\n", result[[2]]))
+
+  return(invisible(result[[1]]));
 }
