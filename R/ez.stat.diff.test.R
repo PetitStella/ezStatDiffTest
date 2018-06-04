@@ -30,16 +30,17 @@ adjust.p.value <- function(p.value, type = c("parametric","non-parametric"), adj
 #' @importFrom lawstat brunner.munzel.test
 #' @importFrom stats t.test
 #' @importFrom exactRankTests wilcox.exact
-#' @param x numeric vector of data values.
+#' @param data data frame
 #' @param paired a logical indicating whether you want a paired test.
-calculate.p.value <- function(x, paired = c(T, F), type = c("parametric","non-parametric")){
+#' @param type parametric of non-parametric
+calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-parametric")){
 
-  xTitle <- colnames(data)
+  xTitle <- colnames(x)
 
   size <- dim(data)
   chooseNum <- choose(size[2],2)
 
-  p <- numeric(chooseNum)  # p値保存用
+  p.value <- numeric(chooseNum)  # p値保存用
   combination <- numeric(chooseNum)  # 2標本検定の組み合わせ
 
   jStart <- 1
@@ -51,7 +52,7 @@ calculate.p.value <- function(x, paired = c(T, F), type = c("parametric","non-pa
 
         # 検定手法選択
         if(method == "parametric"){
-          if(paired == T){
+          if(paired){
             res <- t.test(data[[i]], data[[j]], paired = T)
           }else{
             res <- t.test(data[[i]], data[[j]], paired = F, var.equal=F)
@@ -59,7 +60,7 @@ calculate.p.value <- function(x, paired = c(T, F), type = c("parametric","non-pa
 
         }
         else if(method == "non-parametric"){
-          if(paired == T){
+          if(paired){
             res <- wilcox.exact(data[[i]], data[[j]], alternative="t",paired=T)
           }else{
             res <-brunner.munzel.test(data[[i]], data[[j]])
@@ -72,7 +73,7 @@ calculate.p.value <- function(x, paired = c(T, F), type = c("parametric","non-pa
         }
 
         # p値を取り出し
-        p[count] <- res$p.value
+        p.value[count] <- res$p.value
         combination[count] <- sprintf("%s-%s",xTitle[i],xTitle[j])
         count <- count + 1
       }
@@ -87,9 +88,58 @@ calculate.p.value <- function(x, paired = c(T, F), type = c("parametric","non-pa
       resultMessage <- "Pairwise comparisons using welch t tests"
     }
   }
+  else if(method == "non-parametric"){
+    if(paired == T){
+      resultMessage <- "Pairwise comparisons using Wilcoxon signed rank tests"
+    }else{
+      resultMessage <- "Pairwise comparisons using Brunner-Munzel tests"
+    }
+  }
   cat("\n-------------------------------------------------------\n")
   cat(sprintf("%s\n", resultMessage))
   cat("-------------------------------------------------------\n\n")
 
+  return(invisible(list(p.value, combination)))
 }
 
+#' Plot graph
+#' @param data data frame
+#' @param type parametric of non-parametric
+plot.graph <- function(data, type = c("parametric","non-parametric")){
+  if(method == "parametric"){
+    meanValue <- apply(data,2,mean, na.rm=TRUE)
+    sdValue <- apply(data, 2, sd, na.rm=TRUE)
+    yRoof=round(max(meanValue+sdValue)*1.2, 1)
+    bar <- barplot(meanValue, ylim=c(0,yRoof), names.arg = xTitle)
+    arrows(bar, meanValue-sdValue, bar, meanValue+sdValue, angle=90, length=0.1)
+    arrows(bar, meanValue+sdValue, bar, meanValue-sdValue, angle=90, length=0.1)
+    axis(side=1, bar, labels=F)
+  }
+  else if(method == "non-parametric"){
+    boxplot(data, range = 0)
+  }
+}
+
+#' Conduct statistical difference test
+#' @param data data frame
+#' @param paired a logical indicating whether you want a paired test.
+#' @param type parametric of non-parametric.
+#' @param adjust.method p-values adjusted using several methods.
+#' @param plota a logical indicating whether you want a plot graph.
+ez.stat.diff.test <- function(data,
+                              type = c("parametric", "non-parametric"),
+                              paired = FALSE,
+                              adjust.method = c("holm", "bonferroni", "BH"),
+                              plot = TRUE){
+  options(scipen=10)
+
+  p <- calculate.p.value(data, paired, type)
+
+  if(plot){
+    plot.graph(data, type)
+  }
+
+  result <- adjust.p.value(p[[1]], type, adjust.method)
+  rownames(result) <- p[[2]]
+  return(invisible(result));
+}
