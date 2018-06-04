@@ -12,3 +12,4 @@ Imports:
   stats,
   lawstat, 
   exactRankTests
+RoxygenNote: 6.0.1
