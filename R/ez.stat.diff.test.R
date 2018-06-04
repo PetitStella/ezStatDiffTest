@@ -20,8 +20,6 @@ adjust.p.value <- function(p.value, adjust.method = c("holm", "bonferroni", "BH"
     return(NA)
   }
   p.adjust <- data.frame(p.adjust)
-  #print(p.adjust)
-  #cat(sprintf("\n%s\n", resultMessage))
   return(invisible(list(p.adjust,resultMessage)))
 }
 
