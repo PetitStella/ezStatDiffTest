@@ -76,7 +76,7 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
         }
         else{
           # エラー処理
-          warning(sprintf("method = \"%s\" is invalid!", method))
+          warning(sprintf("method = \"%s\" is invalid!", type))
           return(NA)
         }
 
@@ -115,6 +115,12 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 #'
 #' @description  Plot bar graphs (parametric case) or box plots (non-parametric case).
 #'
+#' @importFrom graphics barplot
+#' @importFrom graphics boxplot
+#' @importFrom graphics arrows
+#' @importFrom graphics axis
+#' @importFrom stats sd
+#'
 #' @param data response vector.
 #' @param type select test type whether parametric or non-parametric.
 #'
@@ -137,11 +143,22 @@ plot.graph <- function(data, type = c("parametric","non-parametric")){
 
 #' Conduct statistical difference tests
 #'
+#' @description Calculate two sample or pairwise comparisons with corrections
+#'
 #' @param data response vector.
 #' @param paired a logical indicating whether you want a paired test.
 #' @param type select test type whether parametric or non-parametric.
 #' @param adjust.method method for adjusting p-values.
 #' @param plot a logical indicating whether you want a plot graph.
+#'
+#'
+#' @examples {
+#' A <- c(1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2)
+#' B <- c(3, 3, 4, 3, 1, 2, 3, 1, 1, 5, 4)
+#' data <- data.frame(A,B)
+#'
+#' ez.stat.diff.test(data, "parametric", paired=TRUE, adjust.method = "holm")
+#' }
 #' @export
 #'
 ez.stat.diff.test <- function(data,

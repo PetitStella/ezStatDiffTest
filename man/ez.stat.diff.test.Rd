@@ -20,5 +20,14 @@ ez.stat.diff.test(data, type = c("parametric", "non-parametric"),
 \item{plot}{a logical indicating whether you want a plot graph.}
 }
 \description{
-Conduct statistical difference tests
+Calculate two sample or pairwise comparisons with corrections
+}
+\examples{
+{
+A <- c(1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2)
+B <- c(3, 3, 4, 3, 1, 2, 3, 1, 1, 5, 4)
+data <- data.frame(A,B)
+
+ez.stat.diff.test(data, "parametric", paired=TRUE, adjust.method = "holm")
+}
 }

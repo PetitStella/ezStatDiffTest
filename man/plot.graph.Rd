@@ -12,5 +12,5 @@
 \item{type}{select test type whether parametric or non-parametric.}
 }
 \description{
-Plot graph
+Plot bar graphs (parametric case) or box plots (non-parametric case).
 }

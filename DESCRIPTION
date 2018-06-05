@@ -1,15 +1,16 @@
 Package: ezStatisticalDifferenceTest
 Type: Package
 Title: Conduct Statistical Difference Tests
-Version: 0.1.0
+Version: 0.2.0
 Author: Akira Furui
 Maintainer: Akira Furui <putit.stella@gmail.com>
 Description: Conduct Statistical difference tests in both cases of two samples and multiple samples.
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: 
+Imports:
   stats,
   lawstat, 
-  exactRankTests
+  exactRankTests,
+  graphics
 RoxygenNote: 6.0.1

@@ -15,5 +15,5 @@ calculate.p.value(data, paired = FALSE, type = c("parametric",
 \item{type}{select test type whether parametric or non-parametric.}
 }
 \description{
-Calculate p-value
+Perform two sample statistical test for each combination.
 }

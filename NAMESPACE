@@ -2,6 +2,11 @@
 
 export(ez.stat.diff.test)
 importFrom(exactRankTests,wilcox.exact)
+importFrom(graphics,arrows)
+importFrom(graphics,axis)
+importFrom(graphics,barplot)
+importFrom(graphics,boxplot)
 importFrom(lawstat,brunner.munzel.test)
 importFrom(stats,p.adjust)
+importFrom(stats,sd)
 importFrom(stats,t.test)

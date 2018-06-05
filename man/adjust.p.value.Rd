@@ -2,7 +2,7 @@
 % Please edit documentation in R/ez.stat.diff.test.R
 \name{adjust.p.value}
 \alias{adjust.p.value}
-\title{Adjust p-value}
+\title{Adjust p-value for multiple comparisons}
 \usage{
 adjust.p.value(p.value, adjust.method = c("holm", "bonferroni", "BH"))
 }
@@ -12,5 +12,5 @@ adjust.p.value(p.value, adjust.method = c("holm", "bonferroni", "BH"))
 \item{adjust.method}{method for adjusting p-values.}
 }
 \description{
-Adjust p-value
+Given a set of p-values, returns adjusted p-values.
 }
