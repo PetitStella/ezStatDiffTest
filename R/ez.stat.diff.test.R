@@ -1,7 +1,12 @@
-#' Adjust p-value
+#' Adjust p-value for multiple comparisons
+#'
+#' @description Given a set of p-values, returns adjusted p-values.
+#'
 #' @importFrom stats p.adjust
+#'
 #' @param p.value numeric vector of p-values.
 #' @param adjust.method method for adjusting p-values.
+#'
 adjust.p.value <- function(p.value, adjust.method = c("holm", "bonferroni", "BH")){
   if((adjust.method == "holm")||(adjust.method == "Holm")){
     p.adjust <- stats::p.adjust(p.value, method = "holm", n = length(p.value))
@@ -23,13 +28,19 @@ adjust.p.value <- function(p.value, adjust.method = c("holm", "bonferroni", "BH"
   return(invisible(list(p.adjust,resultMessage)))
 }
 
+
 #' Calculate p-value
+#'
+#' @description Perform two sample statistical test for each combination.
+#'
 #' @importFrom lawstat brunner.munzel.test
 #' @importFrom stats t.test
 #' @importFrom exactRankTests wilcox.exact
+#'
 #' @param data data frame
 #' @param paired a logical indicating whether you want a paired test.
 #' @param type select test type whether parametric or non-parametric.
+#'
 calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-parametric")){
 
   xTitle <- colnames(data)
@@ -71,7 +82,7 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 
         # p値を取り出し
         p.value[count] <- res$p.value
-        combination[count] <- sprintf("%s-%s",xTitle[i],xTitle[j])
+        combination[count] <- sprintf("%s - %s",xTitle[i],xTitle[j])
         count <- count + 1
       }
     }
@@ -99,9 +110,14 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
   return(invisible(list(p.value, combination)))
 }
 
+
 #' Plot graph
+#'
+#' @description  Plot bar graphs (parametric case) or box plots (non-parametric case).
+#'
 #' @param data response vector.
 #' @param type select test type whether parametric or non-parametric.
+#'
 plot.graph <- function(data, type = c("parametric","non-parametric")){
   xTitle <- colnames(data)
   if(type == "parametric"){
@@ -118,13 +134,16 @@ plot.graph <- function(data, type = c("parametric","non-parametric")){
   }
 }
 
+
 #' Conduct statistical difference tests
+#'
 #' @param data response vector.
 #' @param paired a logical indicating whether you want a paired test.
 #' @param type select test type whether parametric or non-parametric.
 #' @param adjust.method method for adjusting p-values.
 #' @param plot a logical indicating whether you want a plot graph.
 #' @export
+#'
 ez.stat.diff.test <- function(data,
                               type = c("parametric", "non-parametric"),
                               paired = FALSE,
@@ -138,7 +157,9 @@ ez.stat.diff.test <- function(data,
     plot.graph(data, type)
   }
 
+
   result <- adjust.p.value(p[[1]], adjust.method)
+
   rownames(result[[1]]) <- p[[2]]
 
   print(result[[1]])
