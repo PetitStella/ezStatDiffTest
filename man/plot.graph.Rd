@@ -7,9 +7,9 @@
 \method{plot}{graph}(data, type = c("parametric", "non-parametric"))
 }
 \arguments{
-\item{data}{data frame}
+\item{data}{response vector.}
 
-\item{type}{parametric of non-parametric}
+\item{type}{select test type whether parametric or non-parametric.}
 }
 \description{
 Plot graph

@@ -12,7 +12,7 @@ calculate.p.value(data, paired = FALSE, type = c("parametric",
 
 \item{paired}{a logical indicating whether you want a paired test.}
 
-\item{type}{parametric of non-parametric}
+\item{type}{select test type whether parametric or non-parametric.}
 }
 \description{
 Calculate p-value

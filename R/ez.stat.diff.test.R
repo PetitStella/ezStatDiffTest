@@ -1,18 +1,18 @@
 #' Adjust p-value
 #' @importFrom stats p.adjust
-#' @param p.value p-value to adjust
-#' @param adjust.method p-values adjusted using several methods
+#' @param p.value numeric vector of p-values.
+#' @param adjust.method method for adjusting p-values.
 adjust.p.value <- function(p.value, adjust.method = c("holm", "bonferroni", "BH")){
   if((adjust.method == "holm")||(adjust.method == "Holm")){
-    p.adjust <- p.adjust(p.value, method = "holm", n = length(p.value))
+    p.adjust <- stats::p.adjust(p.value, method = "holm", n = length(p.value))
     resultMessage <- "P value adjustment method: holm"
   }
   else if((adjust.method == "bonferroni")||(adjust.method == "Bonferroni")||(adjust.method == "Bonf")||(adjust.method == "bonf")){
-    p.adjust <- p.adjust(p.value, method = "bonferroni", n = length(p.value))
+    p.adjust <- stats::p.adjust(p.value, method = "bonferroni", n = length(p.value))
     resultMessage <- "P value adjustment method: bonferroni"
   }
   else if(adjust.method == "BH"){
-    p.adjust <- p.adjust(p.value, method = "BH", n = length(p.value))
+    p.adjust <- stats::p.adjust(p.value, method = "BH", n = length(p.value))
     resultMessage <- "P value adjustment method: Benjamini & Hochberg"
   }
   else{
@@ -29,7 +29,7 @@ adjust.p.value <- function(p.value, adjust.method = c("holm", "bonferroni", "BH"
 #' @importFrom exactRankTests wilcox.exact
 #' @param data data frame
 #' @param paired a logical indicating whether you want a paired test.
-#' @param type parametric of non-parametric
+#' @param type select test type whether parametric or non-parametric.
 calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-parametric")){
 
   xTitle <- colnames(data)
@@ -49,18 +49,18 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 
         # 検定手法選択
         if(type == "parametric"){
-          if(paired == TRUE){
-            res <- t.test(data[[i]], data[[j]], paired = T)
+          if(paired){
+            res <- stats::t.test(data[[i]], data[[j]], paired = T)
           }else{
-            res <- t.test(data[[i]], data[[j]], paired = F, var.equal=F)
+            res <- stats::t.test(data[[i]], data[[j]], paired = F, var.equal=F)
           }
 
         }
         else if(type == "non-parametric"){
-          if(paired == TRUE){
-            res <- wilcox.exact(data[[i]], data[[j]], alternative="t",paired=T)
+          if(paired){
+            res <- exactRankTests::wilcox.exact(data[[i]], data[[j]], alternative="t",paired=T)
           }else{
-            res <-brunner.munzel.test(data[[i]], data[[j]])
+            res <-lawstat::brunner.munzel.test(data[[i]], data[[j]])
           }
         }
         else{
@@ -79,7 +79,7 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
   }
 
   if(type == "parametric"){
-    if(paired == TRUE){
+    if(paired){
       resultMessage <- "Pairwise comparisons using paired t tests"
     }else{
       resultMessage <- "Pairwise comparisons using welch t tests"
@@ -100,8 +100,8 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 }
 
 #' Plot graph
-#' @param data data frame
-#' @param type parametric of non-parametric
+#' @param data response vector.
+#' @param type select test type whether parametric or non-parametric.
 plot.graph <- function(data, type = c("parametric","non-parametric")){
   xTitle <- colnames(data)
   if(type == "parametric"){
@@ -118,12 +118,12 @@ plot.graph <- function(data, type = c("parametric","non-parametric")){
   }
 }
 
-#' Conduct statistical difference test
-#' @param data data frame
+#' Conduct statistical difference tests
+#' @param data response vector.
 #' @param paired a logical indicating whether you want a paired test.
-#' @param type parametric of non-parametric.
-#' @param adjust.method p-values adjusted using several methods.
-#' @param plota a logical indicating whether you want a plot graph.
+#' @param type select test type whether parametric or non-parametric.
+#' @param adjust.method method for adjusting p-values.
+#' @param plot a logical indicating whether you want a plot graph.
 #' @export
 ez.stat.diff.test <- function(data,
                               type = c("parametric", "non-parametric"),
@@ -134,7 +134,7 @@ ez.stat.diff.test <- function(data,
 
   p <- calculate.p.value(data, paired, type)
 
-  if(plot==TRUE){
+  if(plot){
     plot.graph(data, type)
   }
 

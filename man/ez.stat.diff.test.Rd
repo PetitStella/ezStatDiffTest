@@ -2,23 +2,23 @@
 % Please edit documentation in R/ez.stat.diff.test.R
 \name{ez.stat.diff.test}
 \alias{ez.stat.diff.test}
-\title{Conduct statistical difference test}
+\title{Conduct statistical difference tests}
 \usage{
 ez.stat.diff.test(data, type = c("parametric", "non-parametric"),
   paired = FALSE, adjust.method = c("holm", "bonferroni", "BH"),
   plot = TRUE)
 }
 \arguments{
-\item{data}{data frame}
+\item{data}{response vector.}
 
-\item{type}{parametric of non-parametric.}
+\item{type}{select test type whether parametric or non-parametric.}
 
 \item{paired}{a logical indicating whether you want a paired test.}
 
-\item{adjust.method}{p-values adjusted using several methods.}
+\item{adjust.method}{method for adjusting p-values.}
 
-\item{plota}{a logical indicating whether you want a plot graph.}
+\item{plot}{a logical indicating whether you want a plot graph.}
 }
 \description{
-Conduct statistical difference test
+Conduct statistical difference tests
 }

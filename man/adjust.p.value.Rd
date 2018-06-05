@@ -7,9 +7,9 @@
 adjust.p.value(p.value, adjust.method = c("holm", "bonferroni", "BH"))
 }
 \arguments{
-\item{p.value}{p-value to adjust}
+\item{p.value}{numeric vector of p-values.}
 
-\item{adjust.method}{p-values adjusted using several methods}
+\item{adjust.method}{method for adjusting p-values.}
 }
 \description{
 Adjust p-value
