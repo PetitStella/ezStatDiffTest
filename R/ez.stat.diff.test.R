@@ -76,8 +76,7 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
         }
         else{
           # エラー処理
-          warning(sprintf("method = \"%s\" is invalid!", type))
-          return(NA)
+          stop(paste(sprintf("method = \"%s\" is invalid!", type)))
         }
 
         # p値を取り出し
@@ -167,6 +166,11 @@ ez.stat.diff.test <- function(data,
                               adjust.method = c("holm", "bonferroni", "BH"),
                               plot = TRUE){
   options(scipen=10)
+  options(error=NULL)
+
+  if(!is.data.frame(data)){
+    stop(paste("argument \"data\" must be data.frame"))
+  }
 
   p <- calculate.p.value(data, paired, type)
 
