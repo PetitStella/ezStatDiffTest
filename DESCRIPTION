@@ -12,5 +12,7 @@ Imports:
   stats,
   lawstat, 
   exactRankTests,
-  graphics
+  graphics,
+  ggplot2,
+  tidyr
 RoxygenNote: 6.0.1

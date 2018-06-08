@@ -4,12 +4,17 @@
 \alias{plot.graph}
 \title{Plot graph}
 \usage{
-\method{plot}{graph}(data, type = c("parametric", "non-parametric"))
+\method{plot}{graph}(data, type = c("parametric", "non-parametric"),
+  xlab = "group", ylab = "value")
 }
 \arguments{
 \item{data}{response vector.}
 
 \item{type}{select test type whether parametric or non-parametric.}
+
+\item{xlab}{a title for the x axis (default: "group")}
+
+\item{ylab}{a title for the y axis (default: "value")}
 }
 \description{
 Plot bar graphs (parametric case) or box plots (non-parametric case).

@@ -114,28 +114,42 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 #'
 #' @description  Plot bar graphs (parametric case) or box plots (non-parametric case).
 #'
-#' @importFrom graphics barplot
-#' @importFrom graphics boxplot
-#' @importFrom graphics arrows
-#' @importFrom graphics axis
+#' @import ggplot2
+#' @importFrom graphics plot
 #' @importFrom stats sd
+#' @importFrom tidyr gather
 #'
 #' @param data response vector.
 #' @param type select test type whether parametric or non-parametric.
+#' @param xlab a title for the x axis (default: "group")
+#' @param ylab a title for the y axis (default: "value")
 #'
-plot.graph <- function(data, type = c("parametric","non-parametric")){
+plot.graph <- function(data, type = c("parametric","non-parametric"), xlab = "group", ylab = "value"){
+
+    ggplot()+theme_set(theme_classic(base_size = 16))
+
   xTitle <- colnames(data)
   if(type == "parametric"){
-    meanValue <- apply(data,2,mean, na.rm=TRUE)
-    sdValue <- apply(data, 2, sd, na.rm=TRUE)
-    yRoof=round(max(meanValue+sdValue)*1.2, 1)
-    bar <- barplot(meanValue, ylim=c(0,yRoof), names.arg = xTitle)
-    arrows(bar, meanValue-sdValue, bar, meanValue+sdValue, angle=90, length=0.1)
-    arrows(bar, meanValue+sdValue, bar, meanValue-sdValue, angle=90, length=0.1)
-    axis(side=1, bar, labels=F)
+    df <- data.frame(
+      group = colnames(data),
+      mean = apply(data, 2, mean),
+      sd = apply(data, 2, sd)
+    )
+    df$group <- factor(df$group, levels=colnames(data))
+    g <- ggplot(df, aes(x = group, y = mean, fill = group))
+    g <- g + geom_bar(stat = "identity")
+    g <- g + geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd, width = 0.1))
+    g <- g + labs(x = xlab, y = ylab, fill=xlab)
+    plot(g)
   }
   else if(type == "non-parametric"){
-    boxplot(data, range = 0)
+    df <- gather(data, key = "group")
+    df$group <- factor(df$group, levels=colnames(data))
+    g <- ggplot(df, aes(y=value, x = group, fill = group))
+    g <- g + stat_boxplot(geom = "errorbar", width=0.3)
+    g <- g+geom_boxplot()
+    g <- g + labs(x = xlab, y = ylab, fill = xlab)
+    plot(g)
   }
 }
 
@@ -149,6 +163,8 @@ plot.graph <- function(data, type = c("parametric","non-parametric")){
 #' @param type select test type whether parametric or non-parametric.
 #' @param adjust.method method for adjusting p-values.
 #' @param plot a logical indicating whether you want a plot graph.
+#' @param xlab a title for the x axis (default: "group")
+#' @param ylab a title for the y axis (default: "value")
 #'
 #'
 #' @examples {
@@ -164,7 +180,9 @@ ez.stat.diff.test <- function(data,
                               type = c("parametric", "non-parametric"),
                               paired = FALSE,
                               adjust.method = c("holm", "bonferroni", "BH"),
-                              plot = TRUE){
+                              plot = TRUE,
+                              xlab = "group",
+                              ylab = "value"){
   options(scipen=10)
   options(error=NULL)
 
@@ -175,7 +193,7 @@ ez.stat.diff.test <- function(data,
   p <- calculate.p.value(data, paired, type)
 
   if(plot){
-    plot.graph(data, type)
+    plot.graph(data, type, xlab, ylab)
   }
 
 
