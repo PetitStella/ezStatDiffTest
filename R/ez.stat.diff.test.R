@@ -235,6 +235,7 @@ ez.check.density <- function(data,
   df <- gather(data, key = "group")
   df$group <- factor(df$group, levels=colnames(data))
 
+  # density for xlim range
   dens <- density(df$value)
 
   g <- ggplot(df, aes(x=value))
