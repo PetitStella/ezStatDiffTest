@@ -6,7 +6,7 @@
 \usage{
 ez.stat.diff.test(data, type = c("parametric", "non-parametric"),
   paired = FALSE, adjust.method = c("holm", "bonferroni", "BH"),
-  plot = TRUE, xlab = "group", ylab = "value")
+  plot = TRUE, group.name = "group", value.name = "value")
 }
 \arguments{
 \item{data}{response vector.}
@@ -19,12 +19,12 @@ ez.stat.diff.test(data, type = c("parametric", "non-parametric"),
 
 \item{plot}{a logical indicating whether you want a plot graph.}
 
-\item{xlab}{a title for the x axis (default: "group")}
+\item{group.name}{a name for the group (default: "group")}
 
-\item{ylab}{a title for the y axis (default: "value")}
+\item{value.name}{a name for the value (default: "value")}
 }
 \description{
-Calculate two sample or pairwise comparisons with corrections
+Calculate two sample or pairwise comparisons with corrections.
 }
 \examples{
 {

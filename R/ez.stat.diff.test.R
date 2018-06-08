@@ -121,10 +121,10 @@ calculate.p.value <- function(data, paired = FALSE, type = c("parametric","non-p
 #'
 #' @param data response vector.
 #' @param type select test type whether parametric or non-parametric.
-#' @param xlab a title for the x axis (default: "group")
-#' @param ylab a title for the y axis (default: "value")
+#' @param group.name a name for the group (default: "group")
+#' @param value.name a name for the value (default: "value")
 #'
-plot.graph <- function(data, type = c("parametric","non-parametric"), xlab = "group", ylab = "value"){
+plot.graph <- function(data, type = c("parametric","non-parametric"), group.name = "group", value.name = "value"){
 
     ggplot()+theme_set(theme_classic(base_size = 16))
 
@@ -139,7 +139,7 @@ plot.graph <- function(data, type = c("parametric","non-parametric"), xlab = "gr
     g <- ggplot(df, aes(x = group, y = mean, fill = group))
     g <- g + geom_bar(stat = "identity")
     g <- g + geom_errorbar(aes(ymin = mean - sd, ymax = mean + sd, width = 0.1))
-    g <- g + labs(x = xlab, y = ylab, fill=xlab)
+    g <- g + labs(x = group.name, y = value.name, fill=group.name)
     plot(g)
   }
   else if(type == "non-parametric"){
@@ -148,7 +148,7 @@ plot.graph <- function(data, type = c("parametric","non-parametric"), xlab = "gr
     g <- ggplot(df, aes(y=value, x = group, fill = group))
     g <- g + stat_boxplot(geom = "errorbar", width=0.3)
     g <- g+geom_boxplot()
-    g <- g + labs(x = xlab, y = ylab, fill = xlab)
+    g <- g + labs(x = group.name, y = value.name, fill = group.name)
     plot(g)
   }
 }
@@ -156,15 +156,15 @@ plot.graph <- function(data, type = c("parametric","non-parametric"), xlab = "gr
 
 #' Conduct statistical difference tests
 #'
-#' @description Calculate two sample or pairwise comparisons with corrections
+#' @description Calculate two sample or pairwise comparisons with corrections.
 #'
 #' @param data response vector.
 #' @param paired a logical indicating whether you want a paired test.
 #' @param type select test type whether parametric or non-parametric.
 #' @param adjust.method method for adjusting p-values.
 #' @param plot a logical indicating whether you want a plot graph.
-#' @param xlab a title for the x axis (default: "group")
-#' @param ylab a title for the y axis (default: "value")
+#' @param group.name a name for the group (default: "group")
+#' @param value.name a name for the value (default: "value")
 #'
 #'
 #' @examples {
@@ -181,8 +181,8 @@ ez.stat.diff.test <- function(data,
                               paired = FALSE,
                               adjust.method = c("holm", "bonferroni", "BH"),
                               plot = TRUE,
-                              xlab = "group",
-                              ylab = "value"){
+                              group.name = "group",
+                              value.name = "value"){
   options(scipen=10)
   options(error=NULL)
 
@@ -193,7 +193,7 @@ ez.stat.diff.test <- function(data,
   p <- calculate.p.value(data, paired, type)
 
   if(plot){
-    plot.graph(data, type, xlab, ylab)
+    plot.graph(data, type, group.name, value.name)
   }
 
 
@@ -206,3 +206,41 @@ ez.stat.diff.test <- function(data,
 
   return(invisible(result[[1]]));
 }
+
+
+#' Check probability density
+#'
+#' @description Compute and plot probability density.
+#'
+#' @import ggplot2
+#' @importFrom stats density
+#'
+#' @param data response vector.
+#' @param group.name a name for the group (default: "group")
+#' @param value.name a name for the value (default: "value")
+#'
+#' @examples {
+#' A <- c(1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2)
+#' B <- c(3, 3, 4, 3, 1, 2, 3, 1, 1, 5, 4)
+#' data <- data.frame(A,B)
+#'
+#' ez.check.density(data)
+#' }
+#'
+#' @export
+#'
+ez.check.density <- function(data,
+                             group.name = "group",
+                             value.name = "value"){
+  df <- gather(data, key = "group")
+  df$group <- factor(df$group, levels=colnames(data))
+
+  dens <- density(df$value)
+
+  g <- ggplot(df, aes(x=value))
+  g <- g + geom_density(aes(fill=group),size=0.5,alpha=0.4)
+  g <- g + xlim(range(dens$x))
+  g <- g + labs(x = value.name, fill = group.name)
+  plot(g)
+}
+

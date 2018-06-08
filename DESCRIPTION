@@ -1,7 +1,7 @@
 Package: ezStatisticalDifferenceTest
 Type: Package
 Title: Conduct Statistical Difference Tests
-Version: 0.2.0
+Version: 0.2.1
 Author: Akira Furui
 Maintainer: Akira Furui <putit.stella@gmail.com>
 Description: Conduct Statistical difference tests in both cases of two samples and multiple samples.
