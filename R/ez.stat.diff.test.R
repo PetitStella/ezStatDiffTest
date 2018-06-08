@@ -232,6 +232,7 @@ ez.stat.diff.test <- function(data,
 ez.check.density <- function(data,
                              group.name = "group",
                              value.name = "value"){
+  ggplot()+theme_set(theme_classic(base_size = 16))
   df <- gather(data, key = "group")
   df$group <- factor(df$group, levels=colnames(data))
 
